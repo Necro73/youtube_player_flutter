@@ -56,11 +56,15 @@ class ProgressBar extends StatefulWidget {
   /// Default is false.
   final bool isExpanded;
 
+  ///Function for changing the viewing time point.
+  final Function()? changeVideoPosition;
+
   /// Creates [ProgressBar] widget.
   ProgressBar({
     this.controller,
     this.colors,
     this.isExpanded = false,
+    this.changeVideoPosition,
   });
 
   @override
@@ -146,6 +150,9 @@ class _ProgressBarState extends State<ProgressBar> {
       _touchDown = false;
     });
     _controller.play();
+    if (widget.changeVideoPosition != null) {
+      widget.changeVideoPosition!();
+    }
   }
 
   Widget _buildBar() {
