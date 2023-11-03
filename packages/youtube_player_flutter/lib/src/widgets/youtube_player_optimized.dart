@@ -83,7 +83,7 @@ class _YoutubePlayerOptimizedState extends State<YoutubePlayerOptimized> {
       isUpdate = true;
       isLoading = true;
     });
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 10));
     controllerVideo = YoutubePlayerController(
       initialVideoId: widget.videoId.toString(),
       flags: YoutubePlayerFlags(
@@ -93,7 +93,6 @@ class _YoutubePlayerOptimizedState extends State<YoutubePlayerOptimized> {
         startAt: seconds,
       ),
     );
-    await Future.delayed(const Duration(milliseconds: 10));
     setState(() {
       isUpdate = false;
     });
