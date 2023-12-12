@@ -100,7 +100,7 @@ class _YoutubePlayerOptimizedState extends State<YoutubePlayerOptimized> {
     controllerVideo.addListener(update);
   }
 
-  Future<void> playPauseVideo() async{
+  Future<void> playPauseVideo() async {
     setState(() {
       isPaused = !isPaused;
     });
@@ -121,7 +121,8 @@ class _YoutubePlayerOptimizedState extends State<YoutubePlayerOptimized> {
 
   Future<void> changeSizeVideo() async {
     controllerVideo.toggleFullScreenMode();
-    if (controllerVideo.value.isFullScreen && widget.changeSizeVideoToSmall != null) {
+    if (controllerVideo.value.isFullScreen &&
+        widget.changeSizeVideoToSmall != null) {
       widget.changeSizeVideoToSmall!();
     } else {
       setState(changeStatusBarToLight);
@@ -133,7 +134,8 @@ class _YoutubePlayerOptimizedState extends State<YoutubePlayerOptimized> {
 
   // ignore: type_annotate_public_apis
   changeStatusBarToLight() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   }
 
@@ -144,104 +146,125 @@ class _YoutubePlayerOptimizedState extends State<YoutubePlayerOptimized> {
         setState(changeStatusBarToLight);
         return true;
       },
-      child: (isUpdate) ? const SizedBox.shrink() : Center(
-      child: SizedBox(
-        width: double.infinity,
-        height: controllerVideo.value.isFullScreen ? double.infinity : MediaQuery.of(context).size.width / 1280 * 720,
-        child: Stack(
-          children: [
-            Center(
-              child: YoutubePlayerBuilder(
-                player: YoutubePlayer(controller: controllerVideo),
-                builder: (context, player) {
-                  return player;
-                },
+      child: (isUpdate)
+          ? const SizedBox.shrink()
+          : Center(
+              child: SizedBox(
+                width: double.infinity,
+                height: controllerVideo.value.isFullScreen
+                    ? double.infinity
+                    : MediaQuery.of(context).size.width / 1280 * 720,
+                child: Stack(
+                  children: [
+                    (!isPaused)
+                        ? YoutubePlayerBuilder(
+                            player: YoutubePlayer(controller: controllerVideo),
+                            builder: (context, player) {
+                              return player;
+                            },
+                          )
+                        : const DecoratedBox(
+                            decoration: BoxDecoration(color: Color(0xFF000000)),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          ),
+                    if (!isLoading)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: showInterface,
+                              onDoubleTap: () {
+                                changeVideoPosition(
+                                    seconds: controllerVideo
+                                            .value.position.inSeconds -
+                                        5);
+                              },
+                              child: const SizedBox(height: double.infinity),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: showInterface,
+                              onDoubleTap: () {
+                                changeVideoPosition(
+                                    seconds: controllerVideo
+                                            .value.position.inSeconds +
+                                        5);
+                              },
+                              child: const SizedBox(height: double.infinity),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (isShowInterface && !isLoading)
+                      Center(
+                        child: InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: playPauseVideo,
+                          child: Icon(
+                            isPaused ? Icons.play_arrow : Icons.pause,
+                            color: const Color(0xFFFFFFFF),
+                            size: 40,
+                          ),
+                        ),
+                      ),
+                    if (isShowInterface && !isLoading)
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4, right: 4),
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: changeSizeVideo,
+                            child: Icon(
+                              (controllerVideo.value.isFullScreen)
+                                  ? Icons.fullscreen_exit
+                                  : Icons.fullscreen,
+                              color: const Color(0xFFFFFFFF),
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (isShowInterface && !isLoading && !isPaused)
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 32),
+                          child: Row(
+                            children: [
+                              ProgressBar(
+                                isExpanded: true,
+                                colors: const ProgressBarColors(),
+                                controller: controllerVideo,
+                                changeVideoPosition: () {
+                                  changeVideoPosition(
+                                      seconds: controllerVideo
+                                          .value.position.inSeconds);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (isLoading)
+                      const Center(
+                        child:
+                            CircularProgressIndicator(color: Color(0xFFFFFFFF)),
+                      ),
+                  ],
+                ),
               ),
             ),
-            if (!isLoading)
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: showInterface,
-                      onDoubleTap: () {
-                        changeVideoPosition(seconds: controllerVideo.value.position.inSeconds - 5);
-                      },
-                      child: const SizedBox(height: double.infinity),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: showInterface,
-                      onDoubleTap: () {
-                        changeVideoPosition(seconds: controllerVideo.value.position.inSeconds + 5);
-                      },
-                      child: const SizedBox(height: double.infinity),
-                    ),
-                  ),
-                ],
-              ),
-            if (isShowInterface && !isLoading)
-              Center(
-                child: InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: playPauseVideo,
-                  child: Icon(
-                    isPaused ? Icons.play_arrow : Icons.pause,
-                    color: const Color(0xFFFFFFFF),
-                    size: 40,
-                  ),
-                ),
-              ),
-            if (isShowInterface && !isLoading)
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 4, right: 4),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onTap: changeSizeVideo,
-                    child: Icon(
-                      (controllerVideo.value.isFullScreen) ? Icons.fullscreen_exit : Icons.fullscreen,
-                      color: const Color(0xFFFFFFFF),
-                      size: 30,
-                    ),
-                  ),
-                ),
-              ),
-            if (isShowInterface && !isLoading && !isPaused)
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 32),
-                  child: Row(
-                    children: [
-                      ProgressBar(
-                        isExpanded: true,
-                        colors: const ProgressBarColors(),
-                        controller: controllerVideo,
-                        changeVideoPosition: () {
-                          changeVideoPosition(seconds: controllerVideo.value.position.inSeconds);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            if (isLoading)
-              const Center(
-                child: CircularProgressIndicator(color: Color(0xFFFFFFFF)),
-              ),
-          ],
-        ),
-      ),
-    ),
     );
   }
 }
